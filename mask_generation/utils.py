@@ -69,9 +69,9 @@ class MaskGeneration:
             direction = mode.get('direction', 'vertical')
             mask = np.zeros((h, w), dtype=np.uint8)
             if direction == 'vertical':
-                mask[:,::how_many_lines] = 255
+                mask[:,::how_many_lines] = 1
             elif direction == 'horizontal':
-                mask[::how_many_lines] = 255
+                mask[::how_many_lines] = 1
             else:
                 raise TypeError("Please select a valid direction")
 
@@ -82,13 +82,13 @@ class MaskGeneration:
             direction = mode.get('direction', 'vertical')
             mask = np.zeros((h, w), dtype=np.uint8)
             if direction == 'vertical':
-                mask[: int(h * ratio)] = 255
+                mask[: int(h * ratio)] = 1
             elif direction == 'horizontal':
-                mask[:, : int(w * ratio)] = 255
+                mask[:, : int(w * ratio)] = 1
             else:
                 raise TypeError(f"Please select a valid direction. {direction} not valid")
             if reverse:
-                mask = 255 - mask
+                mask = 1 - mask
 
         elif name == 'Expand':
             size = mode.get('size')
@@ -102,13 +102,13 @@ class MaskGeneration:
             direction = mode.get('direction', 'interior')
             reverse =  mode.get('reverse', False)
             if direction == 'interior':
-                mask = np.ones((h, w), dtype=np.uint8) * 255
+                mask = np.ones((h, w), dtype=np.uint8) * 1
                 mask[
                         h // 2 - size: h // 2 + size,
                         w // 2 - size: w // 2 + size
                     ] = 0
             elif direction == 'exterior':
-                mask = np.ones((h+size*2, w+size*2)) * 255
+                mask = np.ones((h+size*2, w+size*2)) * 1
                 mask[size:-size, size:-size] = 0
                 if gt.ndim == 3:
                     new_gt = np.zeros((h+size*2, w+size*2, gt.shape[-1]))
@@ -119,7 +119,7 @@ class MaskGeneration:
             else:
                 raise TypeError(f"Please select a valid direction. {direction} not valid")
             if reverse:
-                mask = 255 - mask
+                mask = 1 - mask
 
         elif name == 'Nearest_Neighbor':
             scale = mode.get('scale', 2)
@@ -133,13 +133,13 @@ class MaskGeneration:
                     gt_up = np.zeros((h*scale, w*scale), dtype=np.uint8)
                 gt_up[::scale, ::scale] = gt
                 gt = gt_up
-                mask = np.ones((h*scale, w*scale), dtype=np.uint8) * 255
+                mask = np.ones((h*scale, w*scale), dtype=np.uint8) * 1
                 mask[::scale, ::scale] = 0
             else:
                 gt_up = np.zeros_like(gt)
                 gt_up[::scale, ::scale] = gt[::scale, ::scale]
                 gt = gt_up
-                mask = np.ones((h, w), dtype=np.uint8) * 255
+                mask = np.ones((h, w), dtype=np.uint8) * 1
                 mask[::scale, ::scale] = 0
 
         elif name == 'ThickStrokes':
